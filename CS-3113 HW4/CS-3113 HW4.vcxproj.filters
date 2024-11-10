@@ -43,5 +43,8 @@
     <None Include="SDL2_mixer.dll">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="smpeg2.dll">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

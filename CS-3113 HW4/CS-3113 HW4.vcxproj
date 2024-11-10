@@ -146,6 +146,7 @@ er\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2_mixer.dll" />
+    <None Include="smpeg2.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

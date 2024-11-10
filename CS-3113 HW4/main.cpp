@@ -44,6 +44,8 @@ eh have fun let me know
 #include <ctime>
 #include <vector>
 #include "Entity.h"
+#include "SDL_mixer.h"
+
 
 // ––––– STRUCTS AND ENUMS ––––– //
 struct GameState
@@ -78,9 +80,25 @@ constexpr char CRAB_FILEPATH[] = "assets/crab.png";
 constexpr char BOAT_FILEPATH[] = "assets/boat.png";
 constexpr char WORD_FILEPATH[] = "assets/words.png";
 
+constexpr char BGM_FILEPATH[] = "assets/bgm.mp3",
+BOUNCING_SFX_FILEPATH[] = "assets/jump.mp3";
+constexpr int  LOOP_FOREVER = -1;  // -1 means loop forever in Mix_PlayMusic; 0 means play once and loop zero times
+
 constexpr int NUMBER_OF_TEXTURES = 1;
 constexpr GLint LEVEL_OF_DETAIL = 0;
 constexpr GLint TEXTURE_BORDER = 0;
+
+// BGM
+constexpr int CD_QUAL_FREQ = 44100,  // CD quality
+AUDIO_CHAN_AMT = 2,      // Stereo
+AUDIO_BUFF_SIZE = 4096;
+
+// SFX
+constexpr int PLAY_ONCE = 0,
+NEXT_CHNL = -1,  // next available channel
+MUTE_VOL = 0,
+MILS_IN_SEC = 1000,
+ALL_SFX_CHN = -1;
 
 // ––––– GLOBAL VARIABLES ––––– //
 GameState g_game_state;
@@ -99,7 +117,13 @@ constexpr float PLATFORM_OFFSET = 5.0f;
 
 constexpr int FONTBANK_SIZE = 16;
 
+
+
 GLuint g_font_texture_id;
+
+// Audio
+Mix_Music* g_music;
+Mix_Chunk* g_bouncing_sfx;
 
 // ———— GENERAL FUNCTIONS ———— //
 GLuint load_texture(const char* filepath);
@@ -142,6 +166,7 @@ GLuint load_texture(const char* filepath)
 void initialise()
 {
     SDL_Init(SDL_INIT_VIDEO);
+
     g_display_window = SDL_CreateWindow("PLEASE WORK!",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -174,6 +199,31 @@ void initialise()
 
     glClearColor(BG_RED, BG_BLUE, BG_GREEN, BG_OPACITY);
 
+    // ––––– AUDIO SETUP ––––– //
+   // Start Audio
+    Mix_OpenAudio(
+        CD_QUAL_FREQ,        // the frequency to playback audio at (in Hz)
+        MIX_DEFAULT_FORMAT,  // audio format
+        AUDIO_CHAN_AMT,      // number of channels (1 is mono, 2 is stereo, etc).
+        AUDIO_BUFF_SIZE      // audio buffer size in sample FRAMES (total samples divided by channel count)
+    );
+
+    // Similar to our custom function load_texture
+    g_music = Mix_LoadMUS(BGM_FILEPATH);
+    g_bouncing_sfx = Mix_LoadWAV(BOUNCING_SFX_FILEPATH);
+
+    // This will schedule the music object to begin mixing for playback.
+    // The first parameter is the pointer to the mp3 we loaded
+    // and second parameter is the number of times to loop.
+    Mix_PlayMusic(g_music, LOOP_FOREVER);
+
+    // Set the music to half volume
+    // MIX_MAX_VOLUME is a pre-defined constant
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+    //Mix_VolumeChunk(
+    //    g_bouncing_sfx,     // Set the volume of the bounce sound...
+    //    MIX_MAX_VOLUME / 2  // ... to 1/4th.
+    //);
 
     // ––––– PLATFORMS ––––– //
 
@@ -299,7 +349,19 @@ void process_input()
             case SDLK_SPACE:
                 // Jump
                 if (g_game_state.player->get_collided_bottom())
+                {
                     g_game_state.player->jump();
+                    Mix_PlayChannel(
+                        NEXT_CHNL,       // using the first channel that is not currently in use...
+                        g_bouncing_sfx,  // ...play this chunk of audio...
+                        PLAY_ONCE        // ...once.
+                    );
+                }
+                break;
+
+            case SDLK_m:
+                // Mute volume
+                Mix_HaltMusic();
                 break;
 
             default:
