@@ -267,12 +267,9 @@ void const Entity::check_collision_x(Entity* collidable_entities, int collidable
 void const Entity::check_player_hit(Entity* collidable_entities, int collidable_entity_count){
     m_collided_enemy_left = false;
     m_collided_enemy_right = false;
-    //m_collided_bottom = false;
     check_collision_x(collidable_entities, collidable_entity_count);
-    //check_collision_y(collidable_entities, collidable_entity_count);
 
     if (m_collided_left || m_collided_right) { is_hit = true;}
-    //if (m_collided_bottom) { enemies_hit = true; }
 
 }
 
@@ -280,11 +277,7 @@ void const Entity::check_enemy_hit(Entity* collidable_entities, int collidable_e
     hitting_enemy = true;
     m_collided_enemy_bottom = false;
     check_collision_y(collidable_entities, collidable_entity_count);
-    //if (m_collided_enemy_bottom) {
-    //    enemies_hit = true;
-    //    amt_slay++;
-    //    return true;
-    //}
+
     hitting_enemy = false;
 }
 

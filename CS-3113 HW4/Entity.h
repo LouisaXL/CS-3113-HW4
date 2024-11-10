@@ -159,11 +159,6 @@ public:
     int get_enemy_slay() { return amt_slay; };
     void const inc_enemy_slay() { amt_slay++; };
 
-    // Setters
-    //void const set_entity_type(EntityType new_entity_type) { m_entity_type = new_entity_type; };
-    //void const set_ai_type(AIType new_ai_type) { m_ai_type = new_ai_type; };
-    //void const set_ai_state(AIState new_state) { m_ai_state = new_state; };
-
     // Setter for m_walking
     void set_walking(int walking[4][4])
     {

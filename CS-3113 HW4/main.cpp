@@ -11,10 +11,12 @@
 /*
 READ ME WEALEY OR SOMEONE GRADING IT
 
-The 3 AI is Walk, Guard, Jump
+The 3 AI is Walker, Guarder, Jumper
 I didn't implement the fall=death tho cause I got lazy and didn't feel like getting the extra credit
 
+Defeat enemies by jumping on top of them
 
+eh have fun let me know
 */
 
 #define GL_SILENCE_DEPRECATION
@@ -182,12 +184,6 @@ void initialise()
     for (int i = 0; i < PLATFORM_COUNT; i++) {
         g_game_state.platforms[i] = Entity(platform_texture_id, 0.0f, 0.4f, 0.6f, PLATFORM);
     }
-
-    //for (int i = 0; i < PLATFORM_COUNT - 2; i++)
-    //{
-    //    g_game_state.platforms[i].set_position(glm::vec3(i - PLATFORM_OFFSET + 2.0f, -1.5f, 0.0f));
-    //    g_game_state.platforms[i].update(0.0f, NULL, NULL, 0);
-    //}
     
     // Platform Left
     for (int i = 0; i < 4; i++)
@@ -265,11 +261,6 @@ void initialise()
     g_game_state.enemies[1].set_jumping_power(1.7f);
     g_game_state.enemies[2].set_position(glm::vec3(4.0f, 2.0f, 0.0f));    // Right
 
-    //for (int i = 0; i < CRAB_COUNT; i++) {
-    //    g_game_state.crabs[i].set_entity_type(ENEMY);
-    //    g_game_state.crabs[i].set_ai_type(WALKER);
-    //    g_game_state.crabs[i].set_ai_state(WALKING);
-    //}
 
     for (int i = 0; i < ENEMY_COUNT; i++) {
         g_game_state.enemies[i].set_movement(glm::vec3(0.0f));
@@ -424,6 +415,7 @@ void update()
     g_game_state.player->check_player_hit(g_game_state.enemies, ENEMY_COUNT);
     g_game_state.player->check_enemy_hit(g_game_state.enemies, ENEMY_COUNT);
 
+    // Enemy die when fall
     //for (int i = 0; i < ENEMY_COUNT; i++) {
     //    if (g_game_state.enemies[i].get_position().y <= -5.0) {
     //        g_game_state.player->inc_enemy_slay();
